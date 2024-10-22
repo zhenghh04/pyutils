@@ -3,17 +3,13 @@ import json
 import argparse
 import sys
 import glob
-from torch_timeline_trace import TorchTimelineTrace
+from timeline_trace import TorchTimelineTrace, TimelineTrace, combineTimelineTrace
 parser = argparse.ArgumentParser()
 parser.add_argument("--file-list", action="extend", nargs="+", type=str)
 parser.add_argument("--output", type=str, default="combine.json")
 args = parser.parse_args()
 
-
 flist = args.file_list
-a = TorchTimelineTrace(flist[0]).json
-for f in flist[1:]:
-    b = TorchTimelineTrace(f).json
-    a["traceEvents"] += b["traceEvents"]
-with open(args.output, "w") as fout:
-    fout.write(json.dumps(a, indent=4))
+a = [TorchTimelineTrace(f).json() for f in args.file_list]
+combine = combineTimelineTrace(a)
+combine.write(args.output)
