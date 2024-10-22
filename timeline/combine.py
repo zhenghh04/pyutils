@@ -10,6 +10,6 @@ parser.add_argument("--output", type=str, default="combine.json")
 args = parser.parse_args()
 
 flist = args.file_list
-a = [TorchTimelineTrace(f).json() for f in args.file_list]
+a = [TorchTimelineTrace(f) for f in args.file_list]
 combine = combineTimelineTrace(a)
 combine.write(args.output)

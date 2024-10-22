@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 import json
-class TimelineTrace:
+class TimelineTrace(object):
     def __init__(self, fname):
+        print(f"Reading Trace from {fname}")
         self.fname = fname
         self.json = {}
-    def json(self):
+    def get_json(self):
         return self.json
     def write(self, fname):
+        print(f"Writing Trace to {fname}")
         with open(fname, "w") as fout:
             fout.write(json.dumps(self.json))
         
 class TorchTimelineTrace(TimelineTrace):
     def __init__(self, fname):
-        self.super().__init__(fname)
+        super().__init__(fname)
         with open(fname, "r") as fin:
             self.json = json.load(fin)
         self.rank = self._get_rank()
@@ -30,6 +32,8 @@ class TorchTimelineTrace(TimelineTrace):
         trace = self.json["traceEvents"]
         for i in range(len(trace)):
             a = trace[i]
+            if a["name"] == "PyTorch Profiler (0)":
+                a["pid"] = f"Spans {self.rank}"
             if a["name"] == "process_name":
                 if a["pid"] < 100:
                     if a["pid"] == self.rank%self.num_devices:
@@ -42,7 +46,7 @@ class TorchTimelineTrace(TimelineTrace):
 
 class UniTraceTimelineTrace(TimelineTrace):
     def __init__(self, fname):
-        self.fname = fname
+        super().__init__(fname)
         with open(fname, "r") as fin:
             self.json = json.load(fin)
         self.type = "unitrace"
@@ -54,7 +58,7 @@ class UniTraceTimelineTrace(TimelineTrace):
             
 class PFWTimelineTrace(TimelineTrace):
     def __init__(self, fname):
-        self.super().__init__(fname)
+        super().__init__(fname)
         self.json["traceEvents"] = []
         with open(fpfw, "r") as fin:
             f = fin.readlines()
@@ -69,7 +73,9 @@ class PFWTimelineTrace(TimelineTrace):
 
         
 def combineTimelineTrace(trace_list):
-    combine_trace = trace_list[0].json()
+    combine_trace = trace_list[0].get_json()
     for a in trace_list[1:]:
-        combine_trace["traceEvents"] += a["traceEvents"]
-    return combine_trace
+        combine_trace["traceEvents"] += a.json["traceEvents"]
+    trace_list[0].json = combine_trace
+    return trace_list[0]
+    
