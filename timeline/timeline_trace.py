@@ -10,7 +10,7 @@ class TimelineTrace(object):
     def write(self, fname):
         print(f"Writing Trace to {fname}")
         with open(fname, "w") as fout:
-            fout.write(json.dumps(self.json))
+            fout.write(json.dumps(self.json, indent=4))
         
 class TorchTimelineTrace(TimelineTrace):
     def __init__(self, fname):
@@ -25,7 +25,12 @@ class TorchTimelineTrace(TimelineTrace):
     def _get_rank(self):
         return self.json["distributedInfo"]["rank"]
     def _get_num_devices(self):
-        return len(self.json["deviceProperties"])
+        try:
+            return len(self.json["deviceProperties"])
+        except:
+            print("I don't know how many devices.")
+            return 1
+    
     def _get_world_size(self):
         return self.json["distributedInfo"]["world_size"]
     def rename_process_name(self):
