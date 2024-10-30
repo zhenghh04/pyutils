@@ -44,7 +44,7 @@ class TorchTimelineTrace(TimelineTrace):
                 a["pid"] = 100*self.rank + a["pid"]
             self.json["traceEvents"][i] = a
 
-class UniTraceTimelineTrace(TimelineTrace):
+class UnitraceTimelineTrace(TimelineTrace):
     def __init__(self, fname):
         super().__init__(fname)
         with open(fname, "r") as fin:

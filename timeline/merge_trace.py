@@ -3,7 +3,8 @@ import json
 import argparse
 import sys
 import glob
-from timeline import TorchTimelineTrace, TimelineTrace, combineTimelineTrace, PFWTimelineTrace, UnitraceTimelineTrace
+from timeline.timeline_trace import TorchTimelineTrace, TimelineTrace, combineTimelineTrace, PFWTimelineTrace, UnitraceTimelineTrace
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file-list", action="extend", nargs="+", type=str)
