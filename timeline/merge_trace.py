@@ -21,9 +21,12 @@ def main():
         TraceObj = UnitraceTimelineTrace
     else:
         raise Exception(f"Unknown trace type {args.type}")
-    a = [TraceObj(f) for f in args.file_list]
-    combine = combineTimelineTrace(a)
-    combine.write(args.output)
+    if args.file_list is not None:
+        a = [TraceObj(f) for f in args.file_list]
+        combine = combineTimelineTrace(a)
+        combine.write(args.output)
+    else:
+        raise Exception(f"Please provide the list of files to be merged --file-list")
 
 if __name__=="__main__":
     main()

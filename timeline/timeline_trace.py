@@ -50,8 +50,6 @@ class UnitraceTimelineTrace(TimelineTrace):
         with open(fname, "r") as fin:
             self.json = json.load(fin)
         self.type = "unitrace"
-    def json(self):
-        return self.json
     def write(self, fname):
         with open(fname, "w") as fout:
             fout.write(json.dumps(self.json))
