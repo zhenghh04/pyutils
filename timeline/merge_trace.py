@@ -20,8 +20,8 @@ def main():
         else:
             raise Exception("Unknown trace format")
         return TraceObj(f)
-    if args.file_list is not None:
-        a = [get_trace(f) for f in args.file_list]
+    if args.inputs is not None:
+        a = [get_trace(f) for f in args.inputs]
         combine = combineTimelineTrace(a)
         combine.write(args.output)
     else:

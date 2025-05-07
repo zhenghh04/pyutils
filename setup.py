@@ -12,7 +12,7 @@ setup(
     description="A package for generating and visualizing timelines.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/timeline",  # Replace with your repo URL
+    url="https://github.com/zhenghh04/pyutils",  # Replace with your repo URL
     packages=find_packages(),  # Automatically find packages in your project
     classifiers=[
         "Programming Language :: Python :: 3",
