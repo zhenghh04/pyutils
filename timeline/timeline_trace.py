@@ -26,7 +26,11 @@ class TorchTimelineTrace(TimelineTrace):
         return self.json["distributedInfo"]["rank"]
     def _get_num_devices(self):
         try:
-            return len(self.json["deviceProperties"])
+            n = len(self.json["deviceProperties"])
+            if n==0:
+                return self._get_world_size()//self.json["distributedInfo"]["pg_count"]
+            else:
+                return n
         except:
             print("I don't know how many devices.")
             return 1
@@ -63,7 +67,7 @@ class PFWTimelineTrace(TimelineTrace):
     def __init__(self, fname):
         super().__init__(fname)
         self.json["traceEvents"] = []
-        with open(fpfw, "r") as fin:
+        with open(fname, "r") as fin:
             f = fin.readlines()
             start_line = 0
             end_line = len(f)
@@ -72,7 +76,7 @@ class PFWTimelineTrace(TimelineTrace):
             if f[-1].split()[0]=="]":
                 end_line = -1
             for l in f[start_line:end_line]:
-                self.json.append(l)
+                self.json["traceEvents"].append(l)
 
         
 def combineTimelineTrace(trace_list):

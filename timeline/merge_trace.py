@@ -7,26 +7,25 @@ from timeline.timeline_trace import TorchTimelineTrace, TimelineTrace, combineTi
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--file-list", action="extend", nargs="+", type=str)
+    parser.add_argument("--inputs", action="extend", nargs="+", type=str)
     parser.add_argument("--output", type=str, default="combine.json")
-    parser.add_argument("--type", default="torch", type=str)
     args = parser.parse_args()
-
-    TraceObj = None
-    if args.type == "torch":
-        TraceObj = TorchTimelineTrace
-    elif args.type == "pfw":
-        TraceObj = PFWTimelineTrace
-    elif args.type == "unitrace":
-        TraceObj = UnitraceTimelineTrace
-    else:
-        raise Exception(f"Unknown trace type {args.type}")
+    def get_trace(f):
+        if f.split(".")[-1] == "pfw":
+            TraceObj = PFWTimelineTrace
+        elif f.split(".")[-1] == "json":
+            TraceObj = TorchTimelineTrace
+        elif f.split(".")[-1] == "unitrace":
+            TraceObj = UnitraceTimelineTrace
+        else:
+            raise Exception("Unknown trace format")
+        return TraceObj(f)
     if args.file_list is not None:
-        a = [TraceObj(f) for f in args.file_list]
+        a = [get_trace(f) for f in args.file_list]
         combine = combineTimelineTrace(a)
         combine.write(args.output)
     else:
-        raise Exception(f"Please provide the list of files to be merged --file-list")
+        raise Exception(f"Please provide the list of files to be merged --inputs")
 
 if __name__=="__main__":
     main()
