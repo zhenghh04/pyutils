@@ -76,7 +76,7 @@ class PFWTimelineTrace(TimelineTrace):
             if f[-1].split()[0]=="]":
                 end_line = -1
             for l in f[start_line:end_line]:
-                self.json["traceEvents"].append(l)
+                self.json["traceEvents"].append(json.loads(l))
 
         
 def combineTimelineTrace(trace_list):
